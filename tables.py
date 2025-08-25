@@ -10,10 +10,13 @@ class Player(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     money = Column(Integer, default=1500)
+    position=Column(Integer,default=0)
+    in_jail=Column(Boolean,default=False)
 
     properties = relationship("Property", back_populates="owner")
     turns = relationship("Turn", back_populates="player")
     transactions = relationship("Transaction", back_populates="player")
+    jail=relationship("Jail",back_populates="connect")
 
 class Property(Base):
     __tablename__ = "properties"
@@ -72,6 +75,9 @@ class Jail(Base):
     id = Column(Integer, primary_key=True)
     player_id = Column(Integer)
     turns_in_jail = Column(Integer, default=0)
+
+    connect=relationship("Player",back_populates="jail")
+    
 
 class DiceRoll(Base):
     __tablename__ = "dice_rolls"

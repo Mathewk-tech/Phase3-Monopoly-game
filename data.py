@@ -9,7 +9,8 @@ session=session()
 
 def add_player():
     name=input("Enter player name: ")
-    new_player=Player(name=name,money=1500)
+    position=int(input("Enter players current position: "))
+    new_player=Player(name=name, money=1500, position=position, in_jail=False)
     session.add(new_player)
     session.commit()
     print(f"Added {name} successfully")
@@ -46,7 +47,7 @@ def add_communitychestcard():
 
 
 if __name__=="__main__":
-    print("Hello!What would you like to add?")
+    print("Hello!Who would you like to add?")
     print("1)player")
     print("2)property")
     print("3)card")
