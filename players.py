@@ -41,12 +41,12 @@ class Players(Dice):
                 while not self._name.isalpha():
                     print ("name must be of only letters.No spaces")
                     self._name = input(f"Name of player {j+1}: ") 
-                self.players.append({"name":self._name})
+                self.players.append({"name":self._name, "score":0})
                                       
                   
         def choice(self): 
-            for choice in self.players:                    
-                print(f"{self._name},do you want to roll the dice? y/n ")
+            for player in self.players:                    
+                print(f"{player['name']},do you want to roll the dice? y/n ")
                 # rolling time
                 self._choice= input()
                 # making sure the player must role the dice to proceed
@@ -57,8 +57,12 @@ class Players(Dice):
                     self._choice= input()
                 if self._choice == "y":
                     print("well")                
-                    print(f"{self._name} has rolled a ")
-                    print(self._roll)
+                    print(f"{player['name']} has rolled a ")
+                    # calling the dice class for a new roll
+                    self._dice= Dice()                    
+                    player['score']=self._dice._roll
+                    print(player['score'])
+                    print (self.players)
                    
 
                 else:
