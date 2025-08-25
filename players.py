@@ -11,7 +11,7 @@ class Dice():
         self.dice2=random.randint(1,6)
         self._roll= self.dice1 + self.dice2
         
-class Players(Dice):
+class Initial(Dice):
         def __init__(self):
             super().__init__()  
 
@@ -62,17 +62,30 @@ class Players(Dice):
                     self._dice= Dice()                    
                     player['score']=self._dice._roll
                     print(player['score'])
-                    print (self.players)
+                    # print (self.players)
                    
 
                 else:
                     print("Its yes or no")
                     return
-d=Players()
+d=Initial()
 d.choice()
 class Dice_rule(Dice):
     def __init__(self):
         super().__init__()
         if self.dice1== self.dice2:
-             print("wow")
+             print("You have to roll again")
+             d.choice()
 Dice_rule()
+class Loop:
+    def loop(self):
+        while True:
+                 # create new game (asks number of players + names)
+            d.choice()        # let them roll dice
+
+            again = input("Do you want to play again? y/n ").lower()
+            if again not in ["y", "yes"]:
+                print("Thanks for playing!")
+                break
+
+Loop().loop()
