@@ -3,56 +3,72 @@
 # use count to check the number of players names meet the targeted number
 # ask the player if they want to roll the dice 
 # the player with the highest sum from the roll becomes player1
+import random
+# ineriting the players class
+class Dice():
+    def __init__(self):
+        self.dice1=random.randint(1,6)
+        self.dice2=random.randint(1,6)
+        self._roll= self.dice1 + self.dice2
+        
+class Players(Dice):
+        def __init__(self):
+            super().__init__()  
 
-class Players():
-        def __init__(self):            
-            print("How many players will be playing")
-            # sets a limit in the number of player
-            self.number_input= input()
-            # checks if the input is a number then converts to integer
-            if self.number_input.isdigit():
-                self._number=int(self.number_input)
-                # seting minimum players to  be 2
-                if self._number <2:
-                    print("the minimum players are '2'")
+            while True:
+                # sets a limit in the number of player
+                print("How many players will be playing")
+                self.number_input= input()
+
+                # checks if the input is a number then converts to integer
+                if self.number_input.isdigit():
+                    self._number=int(self.number_input)
+                    # seting minimum players to  be 2
+                    if self._number <2:
+                        print("the minimum players are '2'")
+                    else:
+                        break                        
+                    
+                else:
+                    print("must be a number")
                     return
-                
-            else:
-                print("must be a number")
-                return
-            count= 0
 
             # makes sure the number of names match the set limit
-            while count < self._number:
-                name = input("Name of player ")
-                # the player has only two attempts to give the correct form of name
-                while not name.isalpha():
-                    print ("name must be of only letters")
-                    name = input("Name of player ")
-
-                    # only letters allowed (no digits, no spaces)
-                    if name.isalpha():  
-                        print (name)
-                    return
-                
-                count +=1            
-                print("Do you want to roll the dice? y/n ")
+            self.players = []
+            for j in range  (self._number):
+                self._name = input(f"Name of player {j+1}: ")
+                # only letters allowed (no digits, no spaces)
+                while not self._name.isalpha():
+                    print ("name must be of only letters.No spaces")
+                    self._name = input(f"Name of player {j+1}: ") 
+                self.players.append({"name":self._name})
+                                      
+                  
+        def choice(self): 
+            for choice in self.players:                    
+                print(f"{self._name},do you want to roll the dice? y/n ")
                 # rolling time
-                choice= input()
+                self._choice= input()
                 # making sure the player must role the dice to proceed
-                while choice == "n":
+                while self._choice == "n":
                     print("You must roll the dice ")
                     print("Do you want to roll the dice? y/n ")
                 # rolling time
-                    choice= input()
-                if choice == "y":
-                    print("wel")
+                    self._choice= input()
+                if self._choice == "y":
+                    print("well")                
+                    print(f"{self._name} has rolled a ")
+                    print(self._roll)
+                   
+
                 else:
                     print("Its yes or no")
                     return
-# ineriting the players class
-class Dice(Players):
+d=Players()
+d.choice()
+class Dice_rule(Dice):
     def __init__(self):
         super().__init__()
-
-Dice()
+        if self.dice1== self.dice2:
+             print("wow")
+Dice_rule()
