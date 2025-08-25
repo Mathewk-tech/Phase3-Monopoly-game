@@ -50,3 +50,9 @@ class Players():
                 else:
                     print("Its yes or no")
                     return
+# ineriting the players class
+class Dice(Players):
+    def __init__(self):
+        super().__init__()
+
+Dice()
