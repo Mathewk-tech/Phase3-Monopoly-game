@@ -80,12 +80,7 @@ Dice_rule()
 class Loop:
     def loop(self):
         while True:
-                 # create new game (asks number of players + names)
-            d.choice()        # let them roll dice
-
-            again = input("Do you want to play again? y/n ").lower()
-            if again not in ["y", "yes"]:
-                print("Thanks for playing!")
-                break
-
+         # let them roll dice more than once
+            d.choice()        
+           
 Loop().loop()
