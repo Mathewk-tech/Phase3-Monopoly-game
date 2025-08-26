@@ -1,5 +1,8 @@
-import random
+from players import Dice, Initial
+initial= Initial()
+# rules=Dice_rule()
 
+import random
 # ANSI colors
 RESET = "\033[0m"
 RED = "\033[91m"
@@ -129,14 +132,16 @@ def take_turn():
 
     print(f"\n--- {player['color']}{player['name']}{RESET}'s turn ---")
 
-    input(f"{player['name']} press Enter to roll dice... ")
-    d1, d2 = random.randint(1, 6), random.randint(1, 6)
-    roll = d1 + d2
-    game_state["dice"] = (d1, d2)
-    print(f"{player['name']} rolled {d1} + {d2} = {roll}")
+    # input(f"{player['name']} press Enter to roll dice... ")
+    # d1, d2 = random.randint(1, 6), random.randint(1, 6)
+    # roll = d1 + d2
+    # game_state["dice"] = (d1, d2)
+    # print(f"{player['name']} rolled {d1} + {d2} = {roll}")
+    initial.choice()
+    dice= Dice()
 
     # Move player
-    player["pos"] = (player["pos"] + roll) % 40
+    player["pos"] = (player["pos"] + dice._roll) % 40
     tile_index = player["pos"]
     tile = TILES[tile_index]
 
