@@ -29,6 +29,8 @@ def format_tile(index):
     return [top] + mid_lines + [bot]
 
 
+
+
 def draw_board():
     # --- Bottom row (0–10 reversed) ---
     bottom_indices = list(range(0, 11))[::-1]
