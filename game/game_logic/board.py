@@ -28,23 +28,13 @@ def format_tile(index):
     return [top] + mid_lines + [bot]
 
 
-def draw_row(indices):
-    """Draw a row of tiles side by side."""
-    lines = ["" for _ in range(6)]  # 6 lines tall
-    for idx in indices:
-        tile_lines = format_tile(idx)
-        for i in range(6):
-            lines[i] += tile_lines[i]
-    print("\n".join(lines))
-
-
 def dice_tile():
-    """Returns an ASCII-art tile with two dice side by side."""
+    """Returns an ASCII-art tile with two dice side by side (ASCII safe)."""
     return [
         "+--------------+",
-        "| ⚀      ⚂    |",
+        "|   o      o   |",
         "|              |",
-        "|   ⚄     ⚁   |",
+        "|   o      o   |",
         "|              |",
         "+--------------+",
     ]
@@ -79,9 +69,10 @@ def draw_board():
         print("".join(tile[line_idx] for tile in top_row) + dice[line_idx])
 
     # --- Print Middle Rows (Left + spaces + Right) ---
+    middle_space = " " * (TILE_W * (len(top_row) - 1))
     for l, r in zip(reversed(left_col), right_col):
         for line_idx in range(TILE_H):
-            print(l[line_idx] + " " * (TILE_W * 9) + r[line_idx])
+            print(l[line_idx] + middle_space + r[line_idx])
 
     # --- Print Bottom Row ---
     for line_idx in range(TILE_H):
