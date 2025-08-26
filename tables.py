@@ -4,16 +4,19 @@ from engine import engine
 
 Base = declarative_base()
 
-
 class Player(Base):
     __tablename__ = "players"
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     money = Column(Integer, default=1500)
+    position = Column(Integer, default=0)
+    in_jail = Column(Boolean, default=False)
 
     properties = relationship("Property", back_populates="owner")
     turns = relationship("Turn", back_populates="player")
     transactions = relationship("Transaction", back_populates="player")
+    jail = relationship("Jail", back_populates="player")
+
 
 class Property(Base):
     __tablename__ = "properties"
@@ -34,21 +37,23 @@ class Game(Base):
     turns = relationship("Turn", back_populates="game")
 
 
-
 class Card(Base):
     __tablename__ = "cards"
     id = Column(Integer, primary_key=True)
     description = Column(String)
+
 
 class ChanceCard(Base):
     __tablename__ = "chance_cards"
     id = Column(Integer, primary_key=True)
     description = Column(String)
 
+
 class CommunityChestCard(Base):
     __tablename__ = "community_chest_cards"
     id = Column(Integer, primary_key=True)
     description = Column(String)
+
 
 class Transaction(Base):
     __tablename__ = "transactions"
@@ -57,6 +62,7 @@ class Transaction(Base):
     amount = Column(Integer)
 
     player = relationship("Player", back_populates="transactions")
+
 
 class Turn(Base):
     __tablename__ = "turns"
@@ -67,11 +73,15 @@ class Turn(Base):
     game = relationship("Game", back_populates="turns")
     player = relationship("Player", back_populates="turns")
 
+
 class Jail(Base):
     __tablename__ = "jail"
     id = Column(Integer, primary_key=True)
-    player_id = Column(Integer)
+    player_id = Column(Integer, ForeignKey("players.id"))
     turns_in_jail = Column(Integer, default=0)
+
+    player = relationship("Player", back_populates="jail")  # Fixed from 'connect'
+
 
 class DiceRoll(Base):
     __tablename__ = "dice_rolls"
@@ -80,7 +90,5 @@ class DiceRoll(Base):
     value = Column(Integer)
 
 
-
 Base.metadata.create_all(engine)
 print("success")
-
