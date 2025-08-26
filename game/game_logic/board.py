@@ -1,9 +1,10 @@
 from .game_state import game_state, TILES, RESET, GREEN
 
+TILE_W = 14
+TILE_H = 5
+
 def format_tile(index):
-    """Return a tile as a rectangular box (taller + wider)."""
-    TILE_W = 16   # width
-    TILE_H = 6    # height
+    """Return a tile as a rectangular box (balanced size)."""
     tile = TILES[index]
 
     # ownership / player markers
@@ -28,52 +29,43 @@ def format_tile(index):
     return [top] + mid_lines + [bot]
 
 
-def dice_tile():
-    """Returns an ASCII-art tile with two dice side by side (ASCII safe)."""
-    return [
-        "+--------------+",
-        "|   o      o   |",
-        "|              |",
-        "|   o      o   |",
-        "|              |",
-        "+--------------+",
-    ]
-
-
 def draw_board():
-    TILE_W = 16
-    TILE_H = 6
-
     # --- Bottom row (0–10 reversed) ---
-    bottom_indices = list(range(0, 11))
-    bottom_indices.reverse()
+    bottom_indices = list(range(0, 11))[::-1]
     bottom_row = [format_tile(i) for i in bottom_indices]
 
-    # --- Left column (11–20) ---
-    left_indices = list(range(11, 21))
+    # --- Left column (11–19) ---
+    left_indices = list(range(11, 20))   # 9 tiles
     left_col = [format_tile(i) for i in left_indices]
 
-    # --- Top row (21–30) ---
-    top_indices = list(range(21, 31))
+    # --- Top row (20–30) ---
+    top_indices = list(range(20, 31))    # 11 tiles
     top_row = [format_tile(i) for i in top_indices]
 
-    # --- Dice Tile (after 30th) ---
-    dice = dice_tile()
-
     # --- Right column (31–39) ---
-    right_indices = list(range(31, 40))
+    right_indices = list(range(31, 40))  # 9 tiles
     right_col = [format_tile(i) for i in right_indices]
 
-    # --- Print Top Row (with Dice at end) ---
+    # --- Print Top Row (20–30) ---
     for line_idx in range(TILE_H):
-        print("".join(tile[line_idx] for tile in top_row) + dice[line_idx])
+        print("".join(tile[line_idx] for tile in top_row))
 
-    # --- Print Middle Rows (Left + spaces + Right) ---
-    middle_space = " " * (TILE_W * (len(top_row) - 1))
-    for l, r in zip(reversed(left_col), right_col):
+    # --- Print Middle Rows (align 30 & 31) ---
+    middle_space = " " * (TILE_W * (len(top_row) - 2))
+    max_rows = max(len(left_col), len(right_col))
+
+    for i in range(max_rows):
+        l_tile = left_col[::-1][i] if i < len(left_col) else [" " * TILE_W] * TILE_H
+        r_tile = right_col[i] if i < len(right_col) else [" " * TILE_W] * TILE_H
+
         for line_idx in range(TILE_H):
-            print(l[line_idx] + middle_space + r[line_idx])
+            print(l_tile[line_idx] + middle_space + r_tile[line_idx])
 
-    # --- Print Bottom Row ---
+    # --- Print Bottom Row (10–0) ---
     for line_idx in range(TILE_H):
         print("".join(tile[line_idx] for tile in bottom_row))
+
+    print("\n=====================\n")
+
+
+
