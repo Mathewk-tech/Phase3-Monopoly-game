@@ -1,33 +1,47 @@
 from data import session
 from tables import Player
 
-def handle_chance_or_community(player_id):
+def draw_chance_card(player_id):
     """
-    Task 2: Chance/Community Chest
-    - Just display a message, no effects implemented
+    Displays a generic Chance card message.
+    This is only a placeholder and does not apply real effects.
     """
-
-    player = session.query(Player).filter(Player.id == player_id).first()
-
+    player = session.query(Player).filter_by(id=player_id).first()
     if player:
-        print(f"{player.name} drew a Chance/Community Chest card. No effect applied.")
+        print(f"{player.name} drew a Chance card! (Effect not implemented)")
     else:
-        print("Player not found!")
+        print("Player not found.")
 
+def draw_community_chest_card(player_id):
+    """
+    Displays a generic Community Chest card message.
+    This is only a placeholder and does not apply real effects.
+    """
+    player = session.query(Player).filter_by(id=player_id).first()
+    if player:
+        print(f"{player.name} drew a Community Chest card! (Effect not implemented)")
+    else:
+        print("Player not found.")
 
 def check_bankruptcy(player_id):
     """
-    Task 2: Bankruptcy
-    - If money < 0, remove player from DB
+    Checks if a player's money is below 0.
+    If yes, the player is removed from the game.
     """
-
-    player = session.query(Player).filter(Player.id == player_id).first()
-
-    if player and player.money < 0:
-        print(f"{player.name} is bankrupt and removed from the game!")
-        session.delete(player)
-        session.commit()
-    elif player:
-        print(f"{player.name} is still in the game with ${player.money}.")
+    player = session.query(Player).filter_by(id=player_id).first()
+    if player:
+        if player.money < 0:
+            session.delete(player)
+            session.commit()
+            print(f"{player.name} has gone bankrupt and is removed from the game.")
+        else:
+            print(f"{player.name} is safe. Current balance: ${player.money}")
     else:
-        print("Player not found!")
+        print("Player not found.")
+
+# Example test code
+if __name__ == "__main__":
+    # Replace with a real player id from your database
+    draw_chance_card(1)
+    draw_community_chest_card(1)
+    check_bankruptcy(1)
