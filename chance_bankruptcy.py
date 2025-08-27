@@ -1,47 +1,40 @@
-from data import session
-from tables import Player
+from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+engine = create_engine(DATABASE_URL)
 
 def draw_chance_card(player_id):
-    """
-    Displays a generic Chance card message.
-    This is only a placeholder and does not apply real effects.
-    """
-    player = session.query(Player).filter_by(id=player_id).first()
-    if player:
-        print(f"{player.name} drew a Chance card! (Effect not implemented)")
-    else:
-        print("Player not found.")
-
-def draw_community_chest_card(player_id):
-    """
-    Displays a generic Community Chest card message.
-    This is only a placeholder and does not apply real effects.
-    """
-    player = session.query(Player).filter_by(id=player_id).first()
-    if player:
-        print(f"{player.name} drew a Community Chest card! (Effect not implemented)")
-    else:
-        print("Player not found.")
+    message = "You picked a Chance card. (No effect implemented.)"
+    print(f"Player {player_id}: {message}")
+    return message
 
 def check_bankruptcy(player_id):
-    """
-    Checks if a player's money is below 0.
-    If yes, the player is removed from the game.
-    """
-    player = session.query(Player).filter_by(id=player_id).first()
-    if player:
-        if player.money < 0:
-            session.delete(player)
-            session.commit()
-            print(f"{player.name} has gone bankrupt and is removed from the game.")
+    with engine.begin() as conn:
+        result = conn.execute(
+            text("SELECT money FROM players WHERE id = :id"),
+            {"id": player_id},
+        )
+        money = result.scalar()
+        if money is None:
+            print(f"Player {player_id} does not exist.")
+            return
+        if money < 0:
+            conn.execute(
+                text("DELETE FROM players WHERE id = :id"),
+                {"id": player_id},
+            )
+            print(f"Player {player_id} is bankrupt and removed from the game.")
         else:
-            print(f"{player.name} is safe. Current balance: ${player.money}")
-    else:
-        print("Player not found.")
+            print(f"Player {player_id} is safe with money: {money}")
 
-# Example test code
+# Test block
 if __name__ == "__main__":
-    # Replace with a real player id from your database
-    draw_chance_card(1)
-    draw_community_chest_card(1)
-    check_bankruptcy(1)
+    draw_chance_card(player_id=1)
+    check_bankruptcy(player_id=1)
+    check_bankruptcy(player_id=3)

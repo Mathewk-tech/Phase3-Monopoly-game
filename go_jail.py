@@ -12,15 +12,15 @@ engine = create_engine(DATABASE_URL)
 def add_go_money(player_id, amount=200):
     with engine.begin() as conn:
         conn.execute(
-            text("UPDATE players SET balance = balance + :amount WHERE id = :id"),
+            text("UPDATE players SET money = money + :amount WHERE id = :id"),
             {"amount": amount, "id": player_id},
         )
         result = conn.execute(
-            text("SELECT balance FROM players WHERE id = :id"),
+            text("SELECT money FROM players WHERE id = :id"),
             {"id": player_id},
         )
-        new_balance = result.scalar()
-        print(f"Player {player_id} passed GO → New balance: {new_balance}")
+        new_money = result.scalar()
+        print(f"Player {player_id} passed GO → New money: {new_money}")
 
 def send_to_jail(player_id):
     with engine.begin() as conn:
