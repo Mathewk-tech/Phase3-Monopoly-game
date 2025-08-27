@@ -1,27 +1,36 @@
-from data import session
-from tables import Player
+from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
+import os
 
-def handle_special_action(player_id, action_type):
-    """
-    Task 1: GO & Jail
-    - GO: Add $200 to player's balance
-    - GO_TO_JAIL: Move to jail, set in_jail=True, skip_turn=True
-    """
+# Load environment variables
+load_dotenv()
 
-    player = session.query(Player).filter(Player.id == player_id).first()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-    if not player:
-        print("Player not found!")
-        return
+engine = create_engine(DATABASE_URL)
 
-    if action_type == "GO":
-        player.money += 200
-        print(f"{player.name} passed GO! Collect $200. Balance: ${player.money}")
+def add_go_money(player_id, amount=200):
+    with engine.begin() as conn:
+        conn.execute(
+            text("UPDATE players SET balance = balance + :amount WHERE id = :id"),
+            {"amount": amount, "id": player_id},
+        )
+        result = conn.execute(
+            text("SELECT balance FROM players WHERE id = :id"),
+            {"id": player_id},
+        )
+        new_balance = result.scalar()
+        print(f"Player {player_id} passed GO → New balance: {new_balance}")
 
-    elif action_type == "GO_TO_JAIL":
-        player.position = 10  # Jail space
-        player.in_jail = True
-        player.skip_turn = True
-        print(f"{player.name} goes directly to Jail and will skip their next turn.")
+def send_to_jail(player_id):
+    with engine.begin() as conn:
+        conn.execute(
+            text("UPDATE players SET position = 10, in_jail = TRUE, skip_turn = TRUE WHERE id = :id"),
+            {"id": player_id},
+        )
+        print(f"Player {player_id} sent to Jail and will skip their next turn.")
 
-    session.commit()
+# Test block (runs only if file is executed directly)
+if __name__ == "__main__":
+    add_go_money(player_id=1, amount=200)
+    send_to_jail(player_id=2)
