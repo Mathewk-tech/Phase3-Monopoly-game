@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from engine import engine
-from tables import Player, Property, Game, Card, ChanceCard, CommunityChestCard
+from tables import Player, Property,ChanceCard, CommunityChestCard
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -21,13 +21,6 @@ def add_property():
     session.commit()
     print(f"Added property '{name}' successfully")
 
-def add_card():
-    description = input("Enter card description: ")
-    new_card = Card(description=description)
-    session.add(new_card)
-    session.commit()
-    print("Added card successfully")
-
 def add_chancecard():
     description = input("Enter chance card description: ")
     new_chance = ChanceCard(description=description)
@@ -46,9 +39,8 @@ if __name__ == "__main__":
     print("Hello! Who would you like to add?")
     print("1) Player")
     print("2) Property")
-    print("3) Card")
-    print("4) Chance Card")
-    print("5) Community Chest Card")
+    print("3) Chance Card")
+    print("4) Community Chest Card")
     
     choice = input("Enter one of the choices above: ")
     if choice == "1":
@@ -56,10 +48,8 @@ if __name__ == "__main__":
     elif choice == "2":
         add_property()
     elif choice == "3":
-        add_card()
-    elif choice == "4":
         add_chancecard()
-    elif choice == "5":
+    elif choice == "4":
         add_communitychestcard()
     else:
         print("Wrong input, please try again")
