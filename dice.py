@@ -1,0 +1,80 @@
+import random
+from sqlalchemy.orm import sessionmaker
+from engine import engine
+from tables import Player
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+class Dice:
+    def __init__(self):
+        self.dice1 = random.randint(1, 6)
+        self.dice2 = random.randint(1, 6)
+        self.roll = self.dice1 + self.dice2
+
+    def is_double(self):
+        return self.dice1 == self.dice2
+
+
+class Game:
+    def __init__(self):
+        self.players = []
+        self.get_players()
+
+    def get_players(self):
+        while True:
+            number_input = input("How many players will be playing? ")
+            if number_input.isdigit():
+                number = int(number_input)
+                if number < 2:
+                    print("Minimum number of players is 2.")
+                elif number >8:
+                    print("Maximum number of players is 8.")
+                else:
+                    break
+            else:
+                print("Please enter a valid number.")
+
+        for i in range(number):
+            while True:
+                # strip is for removing spaces
+                name = input(f"Enter player name {i+1}: ").strip()
+                if name.isalpha():
+                    new_player = Player(name=name, money=1500, in_jail=False)
+                    session.add(new_player)
+                    session.commit()
+                    self.players.append(new_player)
+                    break
+                else:
+                    print("Name must contain only letters (no spaces, digits, or special characters).")
+
+    def play(self):
+        for player in self.players:
+            while True:
+                choice = input(f"{player}, do you want to roll the dice? (y/n): ").lower()
+                if choice == "y":
+                    dice = Dice()
+                    print(f"{player} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
+                    player_obj = session.query(Player).filter_by(name=player).first()
+                    if player_obj:
+                        new_position = player_obj.position + dice.roll
+                        player_obj.position = new_position % 40
+                        session.commit()
+                        print(f"{player} is now at position {player_obj.position}")
+                    else:
+                        print(f"Error: Could not find player {player} in database.")
+                    
+                    if dice.is_double():
+                        print("Invalid!You rolled a double! Roll again.")
+                        dice = Dice()
+                        continue
+                
+                elif choice == "n":
+                    print("You must roll to play.")
+                else:
+                    print("Invalid choice. Enter 'y' or 'n'.")
+
+
+if __name__ == "__main__":
+    game = Game()
+    game.play()
