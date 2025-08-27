@@ -99,4 +99,3 @@ class Board(Base):
 
 
 Base.metadata.create_all(engine)
-print("success")
