@@ -12,7 +12,10 @@ class Player(Base):
     position = Column(Integer, default=0)
     in_jail = Column(Boolean, default=False)
     board_id = Column(Integer, ForeignKey("board.id"))
+    game_id = Column(Integer, ForeignKey("games.id"))
 
+    
+    game = relationship("Game", back_populates="players", foreign_keys=[game_id])
     properties = relationship("Property", back_populates="owner")
     turns = relationship("Turn", back_populates="player")
     transactions = relationship("Transaction", back_populates="player")
@@ -40,7 +43,7 @@ class Game(Base):
 
     current_player = relationship("Player", foreign_keys=[current_turn])
     turns = relationship("Turn", back_populates="game")
-    players = relationship("Player", back_populates="game")
+    players = relationship("Player", back_populates="game", foreign_keys=[Player.game_id])
 
 class ChanceCard(Base):
     __tablename__ = "chance_cards"

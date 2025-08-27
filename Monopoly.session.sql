@@ -11,9 +11,14 @@
 -- ALTER TABLE players ADD CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES games(id);
 -- ALTER TABLE games ADD COLUMN current_turn INTEGER;
 -- ALTER TABLE games ADD CONSTRAINT fk_turn FOREIGN KEY (current_turn) REFERENCES players(id);
-ALTER TABLE dice_rolls
-ADD CONSTRAINT fk_player
-FOREIGN KEY (player_id) REFERENCES players(id);
+-- ALTER TABLE dice_rolls
+-- ADD CONSTRAINT fk_player
+-- FOREIGN KEY (player_id) REFERENCES players(id);
+
+
+ALTER TABLE players
+ADD CONSTRAINT fk_players_game
+FOREIGN KEY (game_id) REFERENCES games(id);
 
 
 

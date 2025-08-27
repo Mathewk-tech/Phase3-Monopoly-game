@@ -50,24 +50,26 @@ class Game:
 
     def play(self):
         for player in self.players:
-            while True:
-                choice = input(f"{player}, do you want to roll the dice? (y/n): ").lower()
+            rolling=True
+            while rolling:
+                choice = input(f"{player.name}, do you want to roll the dice? (y/n): ").lower()
                 if choice == "y":
                     dice = Dice()
-                    print(f"{player} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
-                    player_obj = session.query(Player).filter_by(name=player).first()
+                    print(f"{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
+                    player_obj = session.query(Player).filter_by(name=player.name).first()
                     if player_obj:
                         new_position = player_obj.position + dice.roll
                         player_obj.position = new_position % 40
                         session.commit()
-                        print(f"{player} is now at position {player_obj.position}")
+                        print(f"{player.name} is now at position {player_obj.position}")
                     else:
-                        print(f"Error: Could not find player {player} in database.")
+                        print(f"Error: Could not find player {player.name} in the database.")
                     
                     if dice.is_double():
                         print("Invalid!You rolled a double! Roll again.")
-                        dice = Dice()
                         continue
+                    else:
+                        rolling=False
                 
                 elif choice == "n":
                     print("You must roll to play.")
