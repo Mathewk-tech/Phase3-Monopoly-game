@@ -11,14 +11,11 @@ class Player(Base):
     money = Column(Integer, default=1500)
     position = Column(Integer, default=0)
     in_jail = Column(Boolean, default=False)
-    board_id = Column(Integer, ForeignKey("board.id"))
 
     properties = relationship("Property", back_populates="owner")
     turns = relationship("Turn", back_populates="player")
     transactions = relationship("Transaction", back_populates="player")
     jail = relationship("Jail", back_populates="player")
-    
-    current_space = relationship("Board")
 
 
 class Property(Base):
@@ -36,11 +33,8 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     active = Column(Boolean, default=True)
-    current_turn = Column(Integer, ForeignKey("players.id"))
 
-    current_player = relationship("Player", foreign_keys=[current_turn])
     turns = relationship("Turn", back_populates="game")
-    players = relationship("Player", back_populates="game")
 
 class ChanceCard(Base):
     __tablename__ = "chance_cards"
@@ -76,17 +70,16 @@ class Turn(Base):
 class Jail(Base):
     __tablename__ = "jail"
     id = Column(Integer, primary_key=True)
-    game_id = Column(Integer, ForeignKey("games.id"))
     player_id = Column(Integer, ForeignKey("players.id"))
     turns_in_jail = Column(Integer, default=0)
 
-    player = relationship("Player", back_populates="jail")  # Fixed from 'connect'
+    player = relationship("Player", back_populates="jail")
 
 
 class DiceRoll(Base):
     __tablename__ = "dice_rolls"
     id = Column(Integer, primary_key=True)
-    player_id = Column(Integer, ForeignKey("players.id"))
+    player_id = Column(Integer)
     value = Column(Integer)
 
 class Board(Base):

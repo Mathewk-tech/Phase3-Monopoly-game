@@ -1,36 +1,36 @@
-from data import session
-from tables import Player
+from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
+import os
 
-def add_money_on_go(player_id, amount=200):
-    """
-    When a player passes GO, add money to their balance.
-    Default amount is $200.
-    """
-    player = session.query(Player).filter_by(id=player_id).first()
-    if player:
-        player.money += amount
-        session.commit()
-        print(f"{player.name} passed GO and received ${amount}. New balance: ${player.money}")
-    else:
-        print("Player not found.")
+# Load environment variables
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+engine = create_engine(DATABASE_URL)
+
+def add_go_money(player_id, amount=200):
+    with engine.begin() as conn:
+        conn.execute(
+            text("UPDATE players SET money = money + :amount WHERE id = :id"),
+            {"amount": amount, "id": player_id},
+        )
+        result = conn.execute(
+            text("SELECT money FROM players WHERE id = :id"),
+            {"id": player_id},
+        )
+        new_money = result.scalar()
+        print(f"Player {player_id} passed GO → New money: {new_money}")
 
 def send_to_jail(player_id):
-    """
-    Sends a player to jail.
-    Moves them to position 10, sets in_jail=True, and skips their next turn.
-    """
-    player = session.query(Player).filter_by(id=player_id).first()
-    if player:
-        player.position = 10
-        player.in_jail = True
-        player.skip_turn = True
-        session.commit()
-        print(f"{player.name} was sent to Jail. They will skip their next turn.")
-    else:
-        print("Player not found.")
+    with engine.begin() as conn:
+        conn.execute(
+            text("UPDATE players SET position = 10, in_jail = TRUE WHERE id = :id"),
+            {"id": player_id},
+        )
+        print(f"Player {player_id} sent to Jail and will skip their next turn.")
 
-# Example test code
+# Test block (runs only if file is executed directly)
 if __name__ == "__main__":
-    # Replace with a real player id from your database
-    add_money_on_go(1)
-    send_to_jail(1)
+    add_go_money(player_id=1, amount=200)
+    send_to_jail(player_id=2)
