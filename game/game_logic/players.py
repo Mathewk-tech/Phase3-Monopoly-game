@@ -37,7 +37,6 @@ class Initial(Dice):
                 print("must be a number")
                 return
 
-        # makes sure the number of names match the set limit
         self.players = {}
         PLAYER_COLORS = [
                             "\033[91m",  # Bright Red
