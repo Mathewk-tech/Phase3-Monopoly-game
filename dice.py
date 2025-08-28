@@ -3,6 +3,8 @@ from sqlalchemy.orm import sessionmaker
 from engine import engine
 from tables import Player
 import time
+from cards import draw_chance_card
+from cards import draw_community_chest_card
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -83,11 +85,13 @@ class Game:
             if Stop>=duration:
                 print("Times up!Gameover")
                 return
+            ##to skip the turn of a player in  jail
             for player in self.players:
                 player_obj=session.query(Player).filter_by(name=player.name).first()
                 if player_obj.in_jail==True:
                     print(f"{player.name} is currently in jail therefore their turn will be skipped")
                     continue
+
                 rolling=True
                 while rolling:
                     Stop=time.time()-Start
@@ -99,11 +103,12 @@ class Game:
                         dice = Dice()
                         print(f"{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
                         player_obj = session.query(Player).filter_by(name=player.name).first()
+                        
                         if player_obj:
                             starting_position=player_obj.position
                             new_position = starting_position + dice.roll
                             final_position=new_position%40
-
+                            ##for collecting the reward
                             if final_position<starting_position:
                                 player_obj.money+=200
                                 if player_obj.laps is None:
@@ -112,6 +117,13 @@ class Game:
                                     player_obj.laps+=1
                                 print(f"{player_obj.name} Go and collect 200$You have,${player_obj.money} in your bank account")
                             player_obj.position=final_position
+                            ##for dealing with cards
+                            
+                            if player_obj.position in [7, 22, 36]:
+                                 draw_chance_card(player_obj.name)
+                            elif player_obj.position in [2, 17, 33]:
+                                 draw_community_chest_card(player_obj.name)
+                                ##for jail functionality
                             if player_obj.position==30:
                                     print("You have landed on go to jail.Pay 50$ or go to jail")
                                     while True:                         
