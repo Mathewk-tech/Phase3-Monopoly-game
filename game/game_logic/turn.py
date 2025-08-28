@@ -5,9 +5,10 @@ from .board import draw_board
 
 def take_turn():
     players = game_state["players"]
-    player = players[game_state["turn"]]
+    # Fixed code - get player by turn index from values:
+    player = list(players.values())[game_state["turn"]]
 
-    print(f"\n--- {player['color']}{player['name']}{RESET}'s turn ---")
+    print(f"\n--- {player['name']}{RESET}'s turn ---")
     input(f"{player['name']} press Enter to roll dice... ")
 
     d1, d2 = roll_dice()
@@ -17,7 +18,7 @@ def take_turn():
     move_player(player, roll)
 
     # show balances
-    for p in players:
+    for p in players.values():
         print(f"{p['name']} balance: ${p['money']}")
 
     # redraw board
