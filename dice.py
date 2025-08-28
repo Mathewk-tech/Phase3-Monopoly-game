@@ -84,6 +84,10 @@ class Game:
                 print("Times up!Gameover")
                 return
             for player in self.players:
+                player_obj=session.query(Player).filter_by(name=player.name).first()
+                if player_obj.in_jail==True:
+                    print(f"{player.name} is currently in jail therefore their turn will be skipped")
+                    continue
                 rolling=True
                 while rolling:
                     Stop=time.time()-Start
