@@ -20,9 +20,10 @@
 -- ADD CONSTRAINT fk_players_game
 -- FOREIGN KEY (game_id) REFERENCES games(id);
 
-ALTER TABLE jail
-ADD COLUMN game_id INTEGER REFERENCES games(id);
+-- ALTER TABLE jail
+-- ADD COLUMN game_id INTEGER REFERENCES games(id);
 
+ALTER TABLE players ADD COLUMN laps INTEGER DEFAULT 0;
 
 
 -- INSERT INTO properties (name, price, owner_id) VALUES

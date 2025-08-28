@@ -13,6 +13,7 @@ class Player(Base):
     in_jail = Column(Boolean, default=False)
     board_id = Column(Integer, ForeignKey("board.id"))
     game_id = Column(Integer, ForeignKey("games.id"))
+    laps = Column(Integer, default=0)
 
     
     game = relationship("Game", back_populates="players", foreign_keys=[game_id])

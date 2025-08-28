@@ -96,8 +96,46 @@ class Game:
                         print(f"{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
                         player_obj = session.query(Player).filter_by(name=player.name).first()
                         if player_obj:
-                            new_position = player_obj.position + dice.roll
-                            player_obj.position = new_position % 40
+                            starting_position=player_obj.position
+                            new_position = starting_position + dice.roll
+                            final_position=new_position%40
+
+                            if final_position<starting_position:
+                                player_obj.money+=200
+                                if player_obj.laps is None:
+                                    player_obj.laps=1
+                                else:
+                                    player_obj.laps+=1
+                                print(f"{player_obj.name} Go and collect 200$You have,${player_obj.money} in your bank account")
+                            player_obj.position=final_position
+                            if player_obj.position==30:
+                                    print("You have landed on go to jail.Pay 50$ or go to jail")
+                                    while True:                         
+                                        Jail_choice=input("Do you wish to pay 50$?(y,n) :").strip().lower()
+                                        if Jail_choice=="y":
+                                            if player_obj.money>=50:
+                                                player_obj.money-=50
+                                                print("50$ has been deducted from your bank account,you are free to go")
+                                                print(f"Your bank account balance is {player_obj.money}")
+                                            else:
+                                                print("You have insufficient funds therefore you are hereby sent to jail")
+                                                player_obj.position=10
+                                                player_obj.in_jail=True
+                                                rolling=False
+                                                session.commit()
+                                                break
+                                            
+                                        elif Jail_choice=="n":
+                                            print("You have declined to pay 50$,go to jail")
+                                            player_obj.position=10
+                                            player_obj.in_jail=True
+                                            rolling=False
+                                            session.commit()
+                                            break
+                                        else:
+                                            print("Incorrect input please try again")
+                                            continue
+
                             session.commit()
                             print(f"{player.name} is now at position {player_obj.position}")
                         else:
