@@ -1,0 +1,94 @@
+# The number of players has to be input as a limit
+# players to input their names ch the limit
+# use count to check the number of players names meet the targeted number
+# ask the player if they want to roll the dice 
+# the player with the highest sum from the roll becomes player1
+
+import random
+
+# ineriting the players class
+class Dice():
+    def __init__(self):
+        self.dice1 = random.randint(1,6)
+        self.dice2 = random.randint(1,6)
+        self._roll = self.dice1 + self.dice2
+        
+class Initial(Dice):
+    def __init__(self):
+        super().__init__()  
+
+        while True:
+            # sets a limit in the number of player
+            print("How many players will be playing")
+            self.number_input = input()
+
+            # checks if the input is a number then converts to integer
+            if self.number_input.isdigit():
+                self._number = int(self.number_input)
+                # seting minimum players to  be 2
+                if self._number < 2:
+                    print("the minimum players are '2'")
+                elif self._number > 8:
+                    print("The maximum players are '8'")
+                else:
+                    break                        
+                
+            else:
+                print("must be a number")
+                return
+
+        # makes sure the number of names match the set limit
+        self.players = {}
+        PLAYER_COLORS = [
+                            "\033[91m",  # Bright Red
+                            "\033[94m",  # Bright Blue
+                            "\033[93m",  # Bright Yellow
+                            "\033[95m",  # Bright Magenta
+                            "\033[96m",  # Bright Cyan
+                            "\033[33m",  # Orange/Gold
+                            "\033[35m",  # Purple
+                            "\033[34m",  # Dark Blue (still bright)
+                        ]
+        for i in range(1, self._number + 1):
+            name = input(f"Enter name for Player {i}: ")
+            # color = [RED, BLUE, GREEN, YELLOW][(i - 1) % 4]  # cycle colors
+            self.players[i] = {
+                "name": name,
+                "money": 1500,
+                "pos": 0,
+                "color":PLAYER_COLORS[i-1]
+            }                            
+    def choice(self): 
+        for player in self.players:                    
+            print(f"{player['name']},do you want to roll the dice? y/n ")
+            # rolling time
+            self._choice = input()
+            # making sure the player must role the dice to proceed
+            while self._choice == "n":
+                print("You must roll the dice ")
+                print("Do you want to roll the dice? y/n ")
+                # rolling time
+                self._choice = input()
+            if self._choice == "y":
+                print("well")                
+                print(f"{player['name']} has rolled a ")
+                # calling the dice class for a new roll
+                self._dice = Dice()                    
+                player['pos'] = self._dice._roll
+                print(player['pos'])
+                # print (self.players)
+            else:
+                print("Its yes or no")
+                return
+
+class Dice_rule(Dice):
+    def __init__(self):
+        super().__init__()
+        if self.dice1 == self.dice2:
+            print("You have to roll again")
+            Initial.choice(self)
+
+# --------------------------
+# main logic starts here
+# --------------------------
+
