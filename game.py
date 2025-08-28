@@ -1,4 +1,4 @@
-from players import Dice, Initial
+from game.game_logic.players import Dice, Initial
 initial= Initial()
 # rules=Dice_rule()
 
