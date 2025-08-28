@@ -19,7 +19,32 @@ class Dice:
 class Game:
     def __init__(self):
         self.players = []
-        self.get_players()
+        self.resume()
+        if not self.players:
+            self.get_players()
+
+    def resume(self):
+        existing_players=session.query(Player).all()
+        while True:
+            if existing_players:
+                choice=input("DO YOU WANT TO CONTINUE? (y/n): ").strip().lower()
+                if choice=="y":
+                    print("Resuming existing game")
+                    self.players=existing_players
+                    return
+                elif choice=="n":
+                    print("Starting a new game")
+                    for player in existing_players:
+                        session.delete(player)
+                    session.commit()
+                    return
+                else:
+                    print("Wrong input,please try again")
+                    continue
+            else:
+                return
+                
+
 
     def get_players(self):
         while True:
