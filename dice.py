@@ -1,14 +1,18 @@
 import random
+import time
 from sqlalchemy.orm import sessionmaker
 from engine import engine
-from tables import Player
-from tables import Board
-import time
-from cards import draw_chance_card
-from cards import draw_community_chest_card
+from tables import Player, Board
+from cards import draw_chance_card, draw_community_chest_card
+
+from rich import print
+from rich.console import Console
+from rich.prompt import Prompt
+
 
 Session = sessionmaker(bind=engine)
 session = Session()
+console = Console()
 
 class Dice:
     def __init__(self):
@@ -19,7 +23,6 @@ class Dice:
     def is_double(self):
         return self.dice1 == self.dice2
 
-
 class Game:
     def __init__(self):
         self.players = []
@@ -28,46 +31,42 @@ class Game:
             self.get_players()
 
     def resume(self):
-        existing_players=session.query(Player).all()
+        existing_players = session.query(Player).all()
         while True:
             if existing_players:
-                choice=input("DO YOU WANT TO CONTINUE? (y/n): ").strip().lower()
-                if choice=="y":
-                    print("Resuming existing game")
-                    self.players=existing_players
+                choice = Prompt.ask("[bold cyan]Do you want to continue?[/] (y/n)").strip().lower()
+                if choice == "y":
+                    console.print("[green]Resuming existing game[/green]")
+                    self.players = existing_players
                     return
-                elif choice=="n":
-                    print("Starting a new game")
+                elif choice == "n":
+                    console.print("[yellow]Starting a new game[/yellow]")
                     for player in existing_players:
                         session.delete(player)
                     session.commit()
                     return
                 else:
-                    print("Wrong input,please try again")
-                    continue
+                    console.print("[red]Wrong input, please try again.[/red]")
             else:
                 return
-                
-
 
     def get_players(self):
         while True:
-            number_input = input("How many players will be playing? ")
+            number_input = Prompt.ask("[bold cyan]How many players will be playing?[/]")
             if number_input.isdigit():
                 number = int(number_input)
                 if number < 2:
-                    print("Minimum number of players is 2.")
-                elif number >8:
-                    print("Maximum number of players is 8.")
+                    console.print("[red]Minimum number of players is 2.[/red]")
+                elif number > 8:
+                    console.print("[red]Maximum number of players is 8.[/red]")
                 else:
                     break
             else:
-                print("Please enter a valid number.")
+                console.print("[red]Please enter a valid number.[/red]")
 
         for i in range(number):
             while True:
-                # strip is for removing spaces
-                name = input(f"Enter player name {i+1}: ").strip()
+                name = Prompt.ask(f"[bold magenta]Enter player name {i+1}[/]").strip()
                 if name.isalpha():
                     new_player = Player(name=name, money=1500, in_jail=False)
                     session.add(new_player)
@@ -75,104 +74,93 @@ class Game:
                     self.players.append(new_player)
                     break
                 else:
-                    print("Name must contain only letters (no spaces, digits, or special characters).")
+                    console.print("[red]Name must contain only letters (no digits, spaces, or symbols).[/red]")
 
     def play(self):
-        duration=6000
-        Start=time.time()
+        duration = 6000
+        Start = time.time()
 
         while True:
-            Stop=time.time()-Start
-            if Stop>=duration:
-                print("Times up!Gameover")
+            Stop = time.time() - Start
+            if Stop >= duration:
+                console.print("[bold red]Time's up! Game over.[/bold red]")
                 return
-            ##to skip the turn of a player in  jail
+
             for player in self.players:
-                player_obj=session.query(Player).filter_by(name=player.name).first()
-                if player_obj.in_jail==True:
-                    print(f"{player.name} is currently in jail therefore their turn will be skipped")
+                player_obj = session.query(Player).filter_by(name=player.name).first()
+                if player_obj.in_jail:
+                    console.print(f"[bold red]{player.name} is currently in jail. Skipping turn.[/bold red]")
                     continue
 
-                rolling=True
+                rolling = True
                 while rolling:
-                    Stop=time.time()-Start
-                    if Stop>=duration:
-                        print("Times up!Gameover")
+                    Stop = time.time() - Start
+                    if Stop >= duration:
+                        console.print("[bold red]Time's up! Game over.[/bold red]")
                         return
-                    choice = input(f"{player.name}, do you want to roll the dice? (y/n): ").lower()
+
+                    choice = Prompt.ask(f"[bold green]{player.name}[/], do you want to roll the dice? (y/n)").lower()
                     if choice == "y":
                         dice = Dice()
-                        print(f"{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
-                        player_obj = session.query(Player).filter_by(name=player.name).first()
-                        
-                        if player_obj:
-                            starting_position=player_obj.position
-                            new_position = starting_position + dice.roll
-                            final_position=new_position%40
-                            ##for collecting the reward
-                            if final_position<starting_position:
-                                player_obj.money+=200
-                                if player_obj.laps is None:
-                                    player_obj.laps=1
-                                else:
-                                    player_obj.laps+=1
-                                print(f"{player_obj.name} Go and collect 200$You have,${player_obj.money} in your bank account")
-                            player_obj.position=final_position
-                                ##for showing a players position on the board
-                            board_space = session.query(Board).filter_by(position=player_obj.position).first()
-                            if board_space:
-                                print(f"{player.name} landed on: {board_space.name}")
-                            ##for dealing with cards
-                            
-                            if player_obj.position in [7, 22, 36]:
-                                 draw_chance_card(player_obj.name)
-                            elif player_obj.position in [2, 17, 33]:
-                                 draw_community_chest_card(player_obj.name)
-                                ##for jail functionality
-                            if player_obj.position==30:
-                                    print("You have landed on go to jail.Pay 50$ or go to jail")
-                                    while True:                         
-                                        Jail_choice=input("Do you wish to pay 50$?(y,n) :").strip().lower()
-                                        if Jail_choice=="y":
-                                            if player_obj.money>=50:
-                                                player_obj.money-=50
-                                                print("50$ has been deducted from your bank account,you are free to go")
-                                                print(f"Your bank account balance is {player_obj.money}")
-                                            else:
-                                                print("You have insufficient funds therefore you are hereby sent to jail")
-                                                player_obj.position=10
-                                                player_obj.in_jail=True
-                                                rolling=False
-                                                session.commit()
-                                                break
-                                            
-                                        elif Jail_choice=="n":
-                                            print("You have declined to pay 50$,go to jail")
-                                            player_obj.position=10
-                                            player_obj.in_jail=True
-                                            rolling=False
-                                            session.commit()
-                                            break
-                                        else:
-                                            print("Incorrect input please try again")
-                                            continue
+                        console.print(f":game_die: [bold green]{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}[/bold green]")
+                        starting_position = player_obj.position
+                        new_position = starting_position + dice.roll
+                        final_position = new_position % 40
 
-                            session.commit()
-                            print(f"{player.name} is now at position {player_obj.position}")
-                        else:
-                            print(f"Error: Could not find player {player.name} in the database.")
-                        
+                        if final_position < starting_position:
+                            player_obj.money += 200
+                            player_obj.laps = (player_obj.laps or 0) + 1
+                            console.print(f":moneybag: [yellow]{player_obj.name} passed GO! +$200. New Balance: ${player_obj.money}[/yellow]")
+
+                        player_obj.position = final_position
+
+                        board_space = session.query(Board).filter_by(position=final_position).first()
+                        if board_space:
+                            console.print(f":round_pushpin: [blue]{player.name} landed on: {board_space.name}[/blue]")
+
+                        if final_position in [7, 22, 36]:
+                            draw_chance_card(player_obj.name)
+                        elif final_position in [2, 17, 33]:
+                            draw_community_chest_card(player_obj.name)
+
+                        if final_position == 30:
+                            console.print("[bold red]You landed on 'Go to Jail'! Pay $50 or go to jail.[/bold red]")
+                            while True:
+                                jail_choice = Prompt.ask("[bold]Do you want to pay $50?[/] (y/n)").strip().lower()
+                                if jail_choice == "y":
+                                    if player_obj.money >= 50:
+                                        player_obj.money -= 50
+                                        console.print(f"[green]$50 deducted. You're free to go! New balance: ${player_obj.money}[/green]")
+                                    else:
+                                        console.print("[red]Insufficient funds. You are sent to jail.[/red]")
+                                        player_obj.position = 10
+                                        player_obj.in_jail = True
+                                        rolling = False
+                                    session.commit()
+                                    break
+                                elif jail_choice == "n":
+                                    console.print("[red]You chose not to pay. Going to jail.[/red]")
+                                    player_obj.position = 10
+                                    player_obj.in_jail = True
+                                    rolling = False
+                                    session.commit()
+                                    break
+                                else:
+                                    console.print("[red]Invalid input. Please try again.[/red]")
+
+                        session.commit()
+                        console.print(f":arrow_right: [cyan]{player.name} is now at position {player_obj.position}[/cyan]")
+
                         if dice.is_double():
-                            print("Invalid!You rolled a double! Roll again.")
+                            console.print("[yellow]Double rolled! You get another turn.[/yellow]")
                             continue
                         else:
-                            rolling=False
-                    
-                    elif choice == "n":
-                        print("You must roll to play.")
-                    else:
-                        print("Invalid choice. Enter 'y' or 'n'.")
+                            rolling = False
 
+                    elif choice == "n":
+                        console.print("[red]You must roll the dice to continue playing.[/red]")
+                    else:
+                        console.print("[red]Invalid choice. Enter 'y' or 'n'.[/red]")
 
 if __name__ == "__main__":
     game = Game()
