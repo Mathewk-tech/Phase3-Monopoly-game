@@ -1,3 +1,5 @@
+from .players import Initial  # import only once
+
 # ANSI colors
 RESET = "\033[0m"
 RED = "\033[91m"
@@ -12,14 +14,17 @@ TILES = [
     "Free", "Kent", "CC", "IndAve", "IllAve", "RR", "AtlAve", "Vent", "Water", "PacAve",
     "Go2J", "RR", "NC", "CC", "Pen", "Short", "Chance", "Park", "Lux", "Board"
 ]
+# Add this to your game_state.py file after the other color definitions
+
 
 # Centralized Game State
+init = Initial()
+
 game_state = {
-    "players": [
-        {"name": "P1", "pos": 0, "money": 1500, "owned": [], "color": RED},
-        {"name": "P2", "pos": 0, "money": 1500, "owned": [], "color": BLUE}
-    ],
-    "ownership": {},   # tile index → owner name
-    "turn": 0,         # index of whose turn it is (0 = P1, 1 = P2)
-    "dice": (0, 0),    # last dice roll (d1, d2)
+    "start":init,
+    "number": init._number,
+    "players": init.players,   # list of players created by Initial
+    "ownership": {},
+    "turn": 0,
+    "dice": (0, 0),
 }
