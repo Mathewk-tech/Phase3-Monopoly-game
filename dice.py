@@ -2,6 +2,7 @@ import random
 from sqlalchemy.orm import sessionmaker
 from engine import engine
 from tables import Player
+from tables import Board
 import time
 from cards import draw_chance_card
 from cards import draw_community_chest_card
@@ -117,6 +118,10 @@ class Game:
                                     player_obj.laps+=1
                                 print(f"{player_obj.name} Go and collect 200$You have,${player_obj.money} in your bank account")
                             player_obj.position=final_position
+                                ##for showing a players position on the board
+                            board_space = session.query(Board).filter_by(position=player_obj.position).first()
+                            if board_space:
+                                print(f"{player.name} landed on: {board_space.name}")
                             ##for dealing with cards
                             
                             if player_obj.position in [7, 22, 36]:
