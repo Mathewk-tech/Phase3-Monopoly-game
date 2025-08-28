@@ -1,6 +1,12 @@
 from .game_state import game_state, TILES, RESET, GREEN
 
 def handle_property(player, tile_index):
+        # In handle_property function, before the append operation:
+    if "owned" not in player:
+        player["owned"] = []  # Initialize owned properties list
+
+    # Then you can safely append:
+    player["owned"].append(tile_index)
     ownership = game_state["ownership"]
     tile = TILES[tile_index]
 
@@ -19,7 +25,8 @@ def handle_property(player, tile_index):
             print(f"{player['name']} chose not to buy {tile}")
     elif ownership[tile_index] != player["name"]:
         rent = 50
-        owner = next(p for p in game_state["players"] if p["name"] == ownership[tile_index])
+# Fixed code - iterate through player values instead of keys:
+        owner = next(p for p in game_state["players"].values() if p["name"] == ownership[tile_index])  
         player["money"] -= rent
         owner["money"] += rent
         print(f"{player['name']} pays ${rent} rent to {owner['name']}")
