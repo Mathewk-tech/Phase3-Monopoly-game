@@ -2,7 +2,6 @@ from .game_state import game_state, TILES, RESET, GREEN
 
 TILE_W = 14
 TILE_H = 5
-
 def format_tile(index):
     """Return a tile as a rectangular box (balanced size)."""
     tile = TILES[index]
@@ -11,10 +10,10 @@ def format_tile(index):
     marker = ""
     if index in game_state["ownership"]:
         marker += GREEN + f"[{game_state['ownership'][index]}*]" + RESET
-    for p in game_state["players"]:
+    # Fixed code:
+    for p in game_state["players"].values():  # Add .values() to get the player dictionaries
         if p["pos"] == index:
             marker += p["color"] + f"[{p['name']}]" + RESET
-
     # Build box
     top = "+" + "-" * (TILE_W - 2) + "+"
     bot = "+" + "-" * (TILE_W - 2) + "+"
