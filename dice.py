@@ -2,6 +2,7 @@ import random
 from sqlalchemy.orm import sessionmaker
 from engine import engine
 from tables import Player
+import time
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -74,32 +75,44 @@ class Game:
                     print("Name must contain only letters (no spaces, digits, or special characters).")
 
     def play(self):
-        for player in self.players:
-            rolling=True
-            while rolling:
-                choice = input(f"{player.name}, do you want to roll the dice? (y/n): ").lower()
-                if choice == "y":
-                    dice = Dice()
-                    print(f"{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
-                    player_obj = session.query(Player).filter_by(name=player.name).first()
-                    if player_obj:
-                        new_position = player_obj.position + dice.roll
-                        player_obj.position = new_position % 40
-                        session.commit()
-                        print(f"{player.name} is now at position {player_obj.position}")
-                    else:
-                        print(f"Error: Could not find player {player.name} in the database.")
+        duration=6000
+        Start=time.time()
+
+        while True:
+            Stop=time.time()-Start
+            if Stop>=duration:
+                print("Times up!Gameover")
+                return
+            for player in self.players:
+                rolling=True
+                while rolling:
+                    Stop=time.time()-Start
+                    if Stop>=duration:
+                        print("Times up!Gameover")
+                        return
+                    choice = input(f"{player.name}, do you want to roll the dice? (y/n): ").lower()
+                    if choice == "y":
+                        dice = Dice()
+                        print(f"{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
+                        player_obj = session.query(Player).filter_by(name=player.name).first()
+                        if player_obj:
+                            new_position = player_obj.position + dice.roll
+                            player_obj.position = new_position % 40
+                            session.commit()
+                            print(f"{player.name} is now at position {player_obj.position}")
+                        else:
+                            print(f"Error: Could not find player {player.name} in the database.")
+                        
+                        if dice.is_double():
+                            print("Invalid!You rolled a double! Roll again.")
+                            continue
+                        else:
+                            rolling=False
                     
-                    if dice.is_double():
-                        print("Invalid!You rolled a double! Roll again.")
-                        continue
+                    elif choice == "n":
+                        print("You must roll to play.")
                     else:
-                        rolling=False
-                
-                elif choice == "n":
-                    print("You must roll to play.")
-                else:
-                    print("Invalid choice. Enter 'y' or 'n'.")
+                        print("Invalid choice. Enter 'y' or 'n'.")
 
 
 if __name__ == "__main__":
