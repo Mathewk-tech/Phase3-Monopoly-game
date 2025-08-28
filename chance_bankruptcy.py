@@ -2,17 +2,15 @@ from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
 load_dotenv()
-
 DATABASE_URL = os.getenv("DATABASE_URL")
-
 engine = create_engine(DATABASE_URL)
 
 def draw_chance_card(player_id):
-    message = "You picked a Chance card. (No effect implemented.)"
-    print(f"Player {player_id}: {message}")
-    return message
+    print(f"Player {player_id}: You picked a Chance card.")
+
+def draw_community_chest_card(player_id):
+    print(f"Player {player_id}: You picked a Community Chest card.")
 
 def check_bankruptcy(player_id):
     with engine.begin() as conn:
@@ -29,12 +27,12 @@ def check_bankruptcy(player_id):
                 text("DELETE FROM players WHERE id = :id"),
                 {"id": player_id},
             )
-            print(f"Player {player_id} is bankrupt and removed from the game.")
+            print(f"Player {player_id} is bankrupt!")
         else:
-            print(f"Player {player_id} is safe with money: {money}")
+            print(f"Player {player_id} has ${money}")
 
-# Test block
 if __name__ == "__main__":
-    draw_chance_card(player_id=1)
-    check_bankruptcy(player_id=1)
-    check_bankruptcy(player_id=3)
+    draw_chance_card(1)
+    draw_community_chest_card(1)
+    check_bankruptcy(1)
+    check_bankruptcy(3)

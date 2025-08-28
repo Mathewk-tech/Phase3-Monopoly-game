@@ -1,36 +1,34 @@
-from sqlalchemy import create_engine, text
-from dotenv import load_dotenv
-import os
+# Monopoly Game - GO and Jail
 
-# Load environment variables
+import psycopg2   # lets us talk to the database
+import os         # lets us use environment variables
+from dotenv import load_dotenv   # helps load our .env file
+
+# loads the .env file so we can get our database link
 load_dotenv()
-
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL)
+# used to connect to the database
+conn = psycopg2.connect(DATABASE_URL)
+cur = conn.cursor()
 
 def add_go_money(player_id, amount=200):
-    with engine.begin() as conn:
-        conn.execute(
-            text("UPDATE players SET money = money + :amount WHERE id = :id"),
-            {"amount": amount, "id": player_id},
-        )
-        result = conn.execute(
-            text("SELECT money FROM players WHERE id = :id"),
-            {"id": player_id},
-        )
-        new_money = result.scalar()
-        print(f"Player {player_id} passed GO → New money: {new_money}")
+    # add money to a player when they pass GO
+    cur.execute("UPDATE players SET money = money + %s WHERE id = %s", (amount, player_id))
+    conn.commit()
+    print("Player", player_id, "passed GO and got", amount)
 
 def send_to_jail(player_id):
-    with engine.begin() as conn:
-        conn.execute(
-            text("UPDATE players SET position = 10, in_jail = TRUE, skip_turn = TRUE WHERE id = :id"),
-            {"id": player_id},
-        )
-        print(f"Player {player_id} sent to Jail and will skip their next turn.")
+    # move a player to jail (position 10) and make them skip a turn
+    cur.execute("UPDATE players SET position = 10, in_jail = TRUE WHERE id = %s", (player_id,))
+    conn.commit()
+    print("Player", player_id, "was sent to Jail")
 
-# Test block (runs only if file is executed directly)
+# example runs
 if __name__ == "__main__":
-    add_go_money(player_id=1, amount=200)
-    send_to_jail(player_id=2)
+    add_go_money(1)   # player 1 gets money for passing GO
+    send_to_jail(2)   # player 2 goes to jail
+
+# close database connection
+cur.close()
+conn.close()
