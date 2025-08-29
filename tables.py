@@ -46,7 +46,10 @@ class Game(Base):
 
     current_player = relationship("Player", foreign_keys=[current_turn])
     turns = relationship("Turn", back_populates="game")
+<<<<<<< HEAD
     players = relationship("Player", back_populates="game", foreign_keys=[Player.game_id])
+=======
+>>>>>>> origin/MP-5-go-add-money
 
 class ChanceCard(Base):
     __tablename__ = "chance_cards"
@@ -86,7 +89,7 @@ class Jail(Base):
     player_id = Column(Integer, ForeignKey("players.id"))
     turns_in_jail = Column(Integer, default=0)
 
-    player = relationship("Player", back_populates="jail")  # Fixed from 'connect'
+    player = relationship("Player", back_populates="jail")
 
 
 class DiceRoll(Base):
@@ -105,3 +108,7 @@ class Board(Base):
 
 
 Base.metadata.create_all(engine)
+<<<<<<< HEAD
+=======
+print("success")
+>>>>>>> origin/MP-5-go-add-money

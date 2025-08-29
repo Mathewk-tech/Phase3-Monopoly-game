@@ -1,6 +1,10 @@
 from sqlalchemy.orm import sessionmaker
 from engine import engine
+<<<<<<< HEAD
 from tables import Player, Property,ChanceCard, CommunityChestCard
+=======
+from tables import Player, Property, Game, ChanceCard, CommunityChestCard
+>>>>>>> origin/MP-5-go-add-money
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -21,6 +25,11 @@ def add_property():
     session.commit()
     print(f"Added property '{name}' successfully")
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/MP-5-go-add-money
 def add_chancecard():
     description = input("Enter chance card description: ")
     new_chance = ChanceCard(description=description)
