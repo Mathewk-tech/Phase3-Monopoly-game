@@ -30,7 +30,9 @@ class Property(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
+    position = Column(Integer, nullable=False, unique=True)
     owner_id = Column(Integer, ForeignKey("players.id"))
+    rent = Column(Integer, nullable=False)
 
     owner = relationship("Player", back_populates="properties")
 

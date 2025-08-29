@@ -23,7 +23,14 @@
 -- ALTER TABLE jail
 -- ADD COLUMN game_id INTEGER REFERENCES games(id);
 
-ALTER TABLE players ADD COLUMN laps INTEGER DEFAULT 0;
+-- ALTER TABLE players ADD COLUMN laps INTEGER DEFAULT 0;
+
+-- ALTER TABLE properties ADD COLUMN position INTEGER;
+-- ALTER TABLE properties ADD COLUMN rent INTEGER DEFAULT 0;
+
+ALTER TABLE properties ADD CONSTRAINT unique_property_position UNIQUE (position);
+
+
 
 
 -- INSERT INTO properties (name, price, owner_id) VALUES
@@ -54,6 +61,35 @@ ALTER TABLE players ADD COLUMN laps INTEGER DEFAULT 0;
 --   ('Short Line Railroad', 200, NULL),
 --   ('Park Place', 350, NULL),
 --   ('Boardwalk', 400, NULL);
+
+UPDATE properties SET position = 1, rent = 2 WHERE name = 'Mediterranean Avenue';
+UPDATE properties SET position = 3, rent = 4 WHERE name = 'Baltic Avenue';
+UPDATE properties SET position = 6, rent = 6 WHERE name = 'Oriental Avenue';
+UPDATE properties SET position = 8, rent = 6 WHERE name = 'Vermont Avenue';
+UPDATE properties SET position = 9, rent = 8 WHERE name = 'Connecticut Avenue';
+UPDATE properties SET position = 11, rent = 10 WHERE name = 'St. Charles Place';
+UPDATE properties SET position = 12, rent = 75 WHERE name = 'Electric Company'; 
+UPDATE properties SET position = 13, rent = 10 WHERE name = 'States Avenue';
+UPDATE properties SET position = 14, rent = 12 WHERE name = 'Virginia Avenue';
+UPDATE properties SET position = 15, rent = 25 WHERE name = 'Pennsylvania Railroad';
+UPDATE properties SET position = 16, rent = 14 WHERE name = 'St. James Place';
+UPDATE properties SET position = 18, rent = 14 WHERE name = 'Tennessee Avenue';
+UPDATE properties SET position = 19, rent = 16 WHERE name = 'New York Avenue';
+UPDATE properties SET position = 21, rent = 18 WHERE name = 'Kentucky Avenue';
+UPDATE properties SET position = 23, rent = 18 WHERE name = 'Indiana Avenue';
+UPDATE properties SET position = 24, rent = 20 WHERE name = 'Illinois Avenue';
+UPDATE properties SET position = 25, rent = 25 WHERE name = 'B&O Railroad'; 
+UPDATE properties SET position = 26, rent = 22 WHERE name = 'Atlantic Avenue';
+UPDATE properties SET position = 27, rent = 22 WHERE name = 'Ventnor Avenue';
+UPDATE properties SET position = 28, rent = 75 WHERE name = 'Water Works'; 
+UPDATE properties SET position = 29, rent = 24 WHERE name = 'Marvin Gardens';
+UPDATE properties SET position = 31, rent = 26 WHERE name = 'Pacific Avenue';
+UPDATE properties SET position = 32, rent = 26 WHERE name = 'North Carolina Avenue';
+UPDATE properties SET position = 34, rent = 28 WHERE name = 'Pennsylvania Avenue';
+UPDATE properties SET position = 35, rent = 25 WHERE name = 'Short Line Railroad';
+UPDATE properties SET position = 37, rent = 35 WHERE name = 'Park Place';
+UPDATE properties SET position = 39, rent = 50 WHERE name = 'Boardwalk';
+
 
 
 

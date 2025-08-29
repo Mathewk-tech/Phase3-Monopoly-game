@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from engine import engine
 from tables import Player, Board
 from cards import draw_chance_card, draw_community_chest_card
+from property_manager import handle_landing, buy_property
 
 from rich import print
 from rich.console import Console
@@ -147,7 +148,24 @@ class Game:
                                     break
                                 else:
                                     console.print("[red]Invalid input. Please try again.[/red]")
+                        ##this handles the buying of property and been removed out of the game if u cant pay rent
+                        result = handle_landing(session, player_obj)
+                        if result == "bankrupt":
+                            console.print(f"[bold red]{player_obj.name} can't pay rent and is out of the game![/bold red]")
+                            session.delete(player_obj)
+                            session.commit()
+                            self.players = [p for p in self.players if p.id != player_obj.id]
+                            rolling = False
+                            break
 
+                        elif result is not None:
+                            prop = result
+                            buy_choice = Prompt.ask(f"{player_obj.name}, do you want to buy {prop.name} for ${prop.price}? (y/n)").lower()
+                            if buy_choice == "y":
+                                if buy_property(session, player_obj, prop):
+                                    console.print(f"[green]{player_obj.name} bought {prop.name}![/green]")
+                                else:
+                                    console.print(f"[red]Not enough money to buy {prop.name}.[/red]")
                         session.commit()
                         console.print(f":arrow_right: [cyan]{player.name} is now at position {player_obj.position}[/cyan]")
 
