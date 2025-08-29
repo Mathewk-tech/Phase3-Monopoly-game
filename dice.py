@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from engine import engine
 from tables import Player, Board
 from cards import draw_chance_card, draw_community_chest_card
-from property_manager import handle_landing, buy_property
+from property import handle_player_landing,buy_property
 
 from rich import print
 from rich.console import Console
@@ -149,7 +149,7 @@ class Game:
                                 else:
                                     console.print("[red]Invalid input. Please try again.[/red]")
                         ##this handles the buying of property and been removed out of the game if u cant pay rent
-                        result = handle_landing(session, player_obj)
+                        result = handle_player_landing(session, player_obj)
                         if result == "bankrupt":
                             console.print(f"[bold red]{player_obj.name} can't pay rent and is out of the game![/bold red]")
                             session.delete(player_obj)
