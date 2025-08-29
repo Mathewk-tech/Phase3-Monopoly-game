@@ -5,7 +5,12 @@ name = "pypi"
 
 [packages]
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+sqlalchemy = "*"
+psycopg = {extras = ["binary", "pool"], version = "*"}
+>>>>>>> origin/MP-2-dice-rolling
 psycopg = {extras = ["pool", "binary"], version = "*"}
 sqlalchemy = "*"
 alembic = "*"
@@ -15,4 +20,5 @@ python-dotenv = "*"
 [dev-packages]
 
 [requires]
+python_version = "3.12"
 python_version = "3.8"

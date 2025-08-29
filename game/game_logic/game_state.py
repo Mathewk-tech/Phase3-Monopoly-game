@@ -1,3 +1,5 @@
+from .players import Initial  
+
 # ANSI colors
 RESET = "\033[0m"
 RED = "\033[91m"
@@ -13,13 +15,14 @@ TILES = [
     "Go2J", "RR", "NC", "CC", "Pen", "Short", "Chance", "Park", "Lux", "Board"
 ]
 
-# Centralized Game State
+# The input of names begins at the initial of the game
+init = Initial()
+
 game_state = {
-    "players": [
-        {"name": "P1", "pos": 0, "money": 1500, "owned": [], "color": RED},
-        {"name": "P2", "pos": 0, "money": 1500, "owned": [], "color": BLUE}
-    ],
-    "ownership": {},   # tile index → owner name
-    "turn": 0,         # index of whose turn it is (0 = P1, 1 = P2)
-    "dice": (0, 0),    # last dice roll (d1, d2)
+    "start":init,
+    "number": init._number,
+    "players": init.players,   
+    "ownership": {},
+    "turn": 0,
+    "dice": (0, 0),
 }

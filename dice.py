@@ -1,7 +1,7 @@
 import random
-import time
 from sqlalchemy.orm import sessionmaker
 from engine import engine
+<<<<<<< HEAD
 from tables import Player, Board
 from cards import draw_chance_card, draw_community_chest_card
 from property import handle_player_landing,buy_property
@@ -10,10 +10,13 @@ from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
 
+=======
+from tables import Player
+import time
+>>>>>>> origin/MP-2-dice-rolling
 
 Session = sessionmaker(bind=engine)
 session = Session()
-console = Console()
 
 class Dice:
     def __init__(self):
@@ -24,6 +27,7 @@ class Dice:
     def is_double(self):
         return self.dice1 == self.dice2
 
+
 class Game:
     def __init__(self):
         self.players = []
@@ -32,9 +36,10 @@ class Game:
             self.get_players()
 
     def resume(self):
-        existing_players = session.query(Player).all()
+        existing_players=session.query(Player).all()
         while True:
             if existing_players:
+<<<<<<< HEAD
                 console.print("-----------------------------------------")
                 console.print("[bold red]WELCOME TO MONOPOLY![/bold red]")
                 console.print("-----------------------------------------")
@@ -44,36 +49,50 @@ class Game:
                     console.print("[green]Resuming existing game[/green]")
                     console.print(" ")
                     self.players = existing_players
+=======
+                choice=input("DO YOU WANT TO CONTINUE? (y/n): ").strip().lower()
+                if choice=="y":
+                    print("Resuming existing game")
+                    self.players=existing_players
+>>>>>>> origin/MP-2-dice-rolling
                     return
-                elif choice == "n":
-                    console.print("[yellow]Starting a new game[/yellow]")
+                elif choice=="n":
+                    print("Starting a new game")
                     for player in existing_players:
                         session.delete(player)
                     session.commit()
                     return
                 else:
-                    console.print("[red]Wrong input, please try again.[/red]")
+                    print("Wrong input,please try again")
+                    continue
             else:
                 return
+                
+
 
     def get_players(self):
         while True:
-            number_input = Prompt.ask("[bold cyan]How many players will be playing?[/]")
+            number_input = input("How many players will be playing? ")
             if number_input.isdigit():
                 number = int(number_input)
                 if number < 2:
-                    console.print("[red]Minimum number of players is 2.[/red]")
-                elif number > 8:
-                    console.print("[red]Maximum number of players is 8.[/red]")
+                    print("Minimum number of players is 2.")
+                elif number >8:
+                    print("Maximum number of players is 8.")
                 else:
                     break
             else:
-                console.print("[red]Please enter a valid number.[/red]")
+                print("Please enter a valid number.")
 
         for i in range(number):
             while True:
+<<<<<<< HEAD
                 name = Prompt.ask(f"[bold magenta]Enter player name {i+1}[/]").strip()
                 console.print(" ")
+=======
+                # strip is for removing spaces
+                name = input(f"Enter player name {i+1}: ").strip()
+>>>>>>> origin/MP-2-dice-rolling
                 if name.isalpha():
                     new_player = Player(name=name, money=1500, in_jail=False)
                     session.add(new_player)
@@ -81,34 +100,28 @@ class Game:
                     self.players.append(new_player)
                     break
                 else:
-                    console.print("[red]Name must contain only letters (no digits, spaces, or symbols).[/red]")
+                    print("Name must contain only letters (no spaces, digits, or special characters).")
 
     def play(self):
-        duration = 6000
-        Start = time.time()
+        duration=6000
+        Start=time.time()
 
         while True:
-            Stop = time.time() - Start
-            if Stop >= duration:
-                console.print("[bold red]Time's up! Game over.[/bold red]")
+            Stop=time.time()-Start
+            if Stop>=duration:
+                print("Times up!Gameover")
                 return
-
             for player in self.players:
-                player_obj = session.query(Player).filter_by(name=player.name).first()
-                if player_obj.in_jail:
-                    console.print(f"[bold red]{player.name} is currently in jail. Skipping turn.[/bold red]")
-                    continue
-
-                rolling = True
+                rolling=True
                 while rolling:
-                    Stop = time.time() - Start
-                    if Stop >= duration:
-                        console.print("[bold red]Time's up! Game over.[/bold red]")
+                    Stop=time.time()-Start
+                    if Stop>=duration:
+                        print("Times up!Gameover")
                         return
-
-                    choice = Prompt.ask(f"[bold green]{player.name}[/], do you want to roll the dice? (y/n)").lower()
+                    choice = input(f"{player.name}, do you want to roll the dice? (y/n): ").lower()
                     if choice == "y":
                         dice = Dice()
+<<<<<<< HEAD
                         console.print(f":game_die: [bold green]{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}[/bold green]")
                         starting_position = player_obj.position
                         new_position = starting_position + dice.roll
@@ -177,16 +190,29 @@ class Game:
                         console.print("----------------------------------------------------------------------------------")
                         console.print("  ")
 
+=======
+                        print(f"{player.name} rolled: {dice.dice1} + {dice.dice2} = {dice.roll}")
+                        player_obj = session.query(Player).filter_by(name=player.name).first()
+                        if player_obj:
+                            new_position = player_obj.position + dice.roll
+                            player_obj.position = new_position % 40
+                            session.commit()
+                            print(f"{player.name} is now at position {player_obj.position}")
+                        else:
+                            print(f"Error: Could not find player {player.name} in the database.")
+                        
+>>>>>>> origin/MP-2-dice-rolling
                         if dice.is_double():
-                            console.print("[yellow]Double rolled! You get another turn.[/yellow]")
+                            print("Invalid!You rolled a double! Roll again.")
                             continue
                         else:
-                            rolling = False
-
+                            rolling=False
+                    
                     elif choice == "n":
-                        console.print("[red]You must roll the dice to continue playing.[/red]")
+                        print("You must roll to play.")
                     else:
-                        console.print("[red]Invalid choice. Enter 'y' or 'n'.[/red]")
+                        print("Invalid choice. Enter 'y' or 'n'.")
+
 
 if __name__ == "__main__":
     game = Game()
