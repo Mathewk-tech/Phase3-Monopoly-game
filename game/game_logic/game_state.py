@@ -1,4 +1,4 @@
-from .players import Initial  # import only once
+from .players import Initial  
 
 # ANSI colors
 RESET = "\033[0m"
@@ -14,16 +14,14 @@ TILES = [
     "Free", "Kent", "CC", "IndAve", "IllAve", "RR", "AtlAve", "Vent", "Water", "PacAve",
     "Go2J", "RR", "NC", "CC", "Pen", "Short", "Chance", "Park", "Lux", "Board"
 ]
-# Add this to your game_state.py file after the other color definitions
 
-
-# Centralized Game State
+# The input of names begins at the initial of the game
 init = Initial()
 
 game_state = {
     "start":init,
     "number": init._number,
-    "players": init.players,   # list of players created by Initial
+    "players": init.players,   
     "ownership": {},
     "turn": 0,
     "dice": (0, 0),

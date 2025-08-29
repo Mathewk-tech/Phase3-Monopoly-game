@@ -50,7 +50,6 @@ class Initial(Dice):
                         ]
         for i in range(1, self._number + 1):
             name = input(f"Enter name for Player {i}: ")
-            # color = [RED, BLUE, GREEN, YELLOW][(i - 1) % 4]  # cycle colors
             self.players[i] = {
                 "name": name,
                 "money": 1500,
@@ -87,7 +86,4 @@ class Dice_rule(Dice):
             print("You have to roll again")
             Initial.choice(self)
 
-# --------------------------
-# main logic starts here
-# --------------------------
 

@@ -10,9 +10,9 @@ def format_tile(index):
     marker = ""
     if index in game_state["ownership"]:
         marker += GREEN + f"[{game_state['ownership'][index]}*]" + RESET
-    # Fixed code:
-    for p in game_state["players"].values():  # Add .values() to get the player dictionaries
-        if p["pos"] == index:
+    # Getting the players from the dict
+    for p in game_state["players"].values(): 
+         if p["pos"] == index:
             marker += p["color"] + f"[{p['name']}]" + RESET
     # Build box
     top = "+" + "-" * (TILE_W - 2) + "+"

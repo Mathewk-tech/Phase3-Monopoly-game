@@ -25,7 +25,7 @@ def handle_property(player, tile_index):
             print(f"{player['name']} chose not to buy {tile}")
     elif ownership[tile_index] != player["name"]:
         rent = 50
-# Fixed code - iterate through player values instead of keys:
+    #iterate through player values instead of keys:
         owner = next(p for p in game_state["players"].values() if p["name"] == ownership[tile_index])  
         player["money"] -= rent
         owner["money"] += rent

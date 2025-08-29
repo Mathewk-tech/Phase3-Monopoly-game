@@ -5,7 +5,7 @@ from .board import draw_board
 
 def take_turn():
     players = game_state["players"]
-    # Fixed code - get player by turn index from values:
+    #get player by turn index from values:
     player = list(players.values())[game_state["turn"]]
 
     print(f"\n--- {player['name']}{RESET}'s turn ---")
