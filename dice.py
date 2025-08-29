@@ -149,7 +149,7 @@ class Game:
                                 else:
                                     console.print("[red]Invalid input. Please try again.[/red]")
                         ##this handles the buying of property and been removed out of the game if u cant pay rent
-                        result = handle_player_landing(session, player_obj)
+                        result = handle_player_landing(player_obj)
                         if result == "bankrupt":
                             console.print(f"[bold red]{player_obj.name} can't pay rent and is out of the game![/bold red]")
                             session.delete(player_obj)

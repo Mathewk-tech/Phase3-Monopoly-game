@@ -19,4 +19,3 @@ db_credentials={
 DATABASE_URL=URL.create(**db_credentials)
 
 engine=create_engine(DATABASE_URL,echo=False, poolclass=NullPool)
-
