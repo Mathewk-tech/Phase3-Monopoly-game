@@ -4,6 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+<<<<<<< HEAD
+=======
+psycopg = {extras = ["pool", "binary"], version = "*"}
+sqlalchemy = "*"
+alembic = "*"
+python-dotenv = "*"
+>>>>>>> origin/MP-1-game-state
 
 [dev-packages]
 
