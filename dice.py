@@ -35,9 +35,14 @@ class Game:
         existing_players = session.query(Player).all()
         while True:
             if existing_players:
+                console.print("-----------------------------------------")
+                console.print("[bold red]WELCOME TO MONOPOLY![/bold red]")
+                console.print("-----------------------------------------")
+                console.print("[bold magenta]An existing game was found.[/bold magenta]")
                 choice = Prompt.ask("[bold cyan]Do you want to continue?[/] (y/n)").strip().lower()
                 if choice == "y":
                     console.print("[green]Resuming existing game[/green]")
+                    console.print(" ")
                     self.players = existing_players
                     return
                 elif choice == "n":
@@ -68,6 +73,7 @@ class Game:
         for i in range(number):
             while True:
                 name = Prompt.ask(f"[bold magenta]Enter player name {i+1}[/]").strip()
+                console.print(" ")
                 if name.isalpha():
                     new_player = Player(name=name, money=1500, in_jail=False)
                     session.add(new_player)
@@ -149,7 +155,7 @@ class Game:
                                 else:
                                     console.print("[red]Invalid input. Please try again.[/red]")
                         ##this handles the buying of property and been removed out of the game if u cant pay rent
-                        result = handle_player_landing(session, player_obj)
+                        result = handle_player_landing(player_obj)
                         if result == "bankrupt":
                             console.print(f"[bold red]{player_obj.name} can't pay rent and is out of the game![/bold red]")
                             session.delete(player_obj)
@@ -168,6 +174,8 @@ class Game:
                                     console.print(f"[red]Not enough money to buy {prop.name}.[/red]")
                         session.commit()
                         console.print(f":arrow_right: [cyan]{player.name} is now at position {player_obj.position}[/cyan]")
+                        console.print("----------------------------------------------------------------------------------")
+                        console.print("  ")
 
                         if dice.is_double():
                             console.print("[yellow]Double rolled! You get another turn.[/yellow]")
