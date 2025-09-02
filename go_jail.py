@@ -32,3 +32,4 @@ if __name__ == "__main__":
 # close database connection
 cur.close()
 conn.close()
+ 
